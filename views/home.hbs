@@ -1,0 +1,151 @@
+<div class="row g-3">
+    <div class="container col-12 align-middle" style="background-color:#e9ecef">
+        <div class="container col-12 align-middle" style="background-color:#e9ecef">
+            <br>
+            <h2 class="text-left" style="color:blue">Bienvenido {{username}}
+                <button class="btn btn-primary btn-sm center-block" onclick="location.href='/logout'">Cerrar sesion</button>
+            </h2>
+        </div>
+    </div>
+    <br>
+    <div class="col-sm-12">
+        <div class="d-grid gap-2">
+            <button id="btn-submit" class="btn btn-primary btn-sm center-block" type="">Generar Productos Random</button>
+        </div>
+    </div>
+    <form class="row g-3" action="/products" method="POST"> 
+        <hr>        
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#ID</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Imagen</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                
+            </tbody>
+        </table>
+        <hr>
+        <span>Chatea con otros usuarios</span>        
+        <div class="col-sm-3">
+            <div class="input-group input-group-sm mb-3">
+                <span class="input-group-text" id="basic-addon3">Email</span>
+                <input id="input-email" type="email" name="email" required class="form-control" placeholder="Ingresá tu email" aria-label="email" aria-describedby="basic-addon1">
+            </div>
+        </div>
+        <div class="col-sm-5">
+            <div class="input-group input-group-sm mb-3">
+                <span class="input-group-text" id="basic-addon3">Mensaje</span>
+                <input id="input-mensaje" type="text" name="mensaje" required class="form-control" placeholder="Ingresá tu mensaje" aria-label="mensaje" aria-describedby="basic-addon1">
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="d-grid gap-2">
+                <button id="btn-submit-mensaje" class="btn btn-success btn-sm">Enviar mensaje</button>
+            </div>
+        </div>
+        <span>Historial de mensajes</span>
+        <div id="historial-mensajes"></div>
+        <script>
+            const socket = io();
+            const btn = document.getElementById('btn-submit');
+            const btnMensaje = document.getElementById('btn-submit-mensaje');
+            
+            const inputTitle = document.getElementById('input-title');
+            const inputPrice = document.getElementById('input-price');
+            const inputImg = document.getElementById('input-img');
+            
+            btnMensaje.addEventListener('click', (evt) => {
+                evt.preventDefault();
+                const email = document.getElementById('input-email').value;
+                const mensaje = document.getElementById('input-mensaje').value;
+                
+                if (email !== '' && mensaje !== '') {
+                
+                    socket.emit('nuevoMensaje', {
+                        "email" : email,
+                        "message" : mensaje,
+                        "date" : new Date().toLocaleString()
+                    })
+                    document.getElementById('input-mensaje').value = "";
+                }
+                
+            })
+
+            btn.addEventListener('click', (evt) => {
+                $('#table-body').empty();
+                fetch('http://localhost:8080/productos-test')
+                    .then(response => response.json())
+                    .then(data => data.forEach( (element) => {
+                            $('#table-body').append(`
+                            <tr>
+                                <td>${element.id}</td>
+                                <td>${element.title}</td>
+                                <td>${element.price}</td>
+                                <td><img src="${element.thumbnail}" width=50px></td>
+                            </tr>
+                        `)
+                    }));
+            })
+
+            socket.on('listaMensajesActualizada', (data) => {
+                $('#historial-mensajes').empty();
+                data.forEach( (mensaje) => {
+                    $('#historial-mensajes').append(
+                    `
+                    <small style="display:block"> - <strong style="color:blue">${mensaje.email}</strong> <openingtag style="color:maroon">[${mensaje.date}]</closingtag>: <i style= "color:green">${mensaje.message}</i> </small>
+                    `
+                    )
+                })
+            })
+            
+            socket.on('listaMensajesBienvenida', (data) => {
+                $('#historial-mensajes').empty();
+                data.forEach( (mensaje) => {
+                    $('#historial-mensajes').append(
+                    `
+                    <small style="display:block"> - <strong style="color:blue">${mensaje.email}</strong> <openingtag style="color:maroon">[${mensaje.date}]</closingtag>: <i style= "color:green">${mensaje.message}</i> </small>
+                    `
+                    )
+                })
+            })
+            
+            socket.on('listaActualizada', (data) => {
+                $('#table-body').empty();
+                data.forEach( (element) => {
+                
+                    $('#table-body').append(
+                    `
+                    <tr>
+                        <td>${element.id}</td>
+                        <td>${element.title}</td>
+                        <td>${element.price}</td>
+                        <td><img src="${element.thumbnail}" width=50px></td>
+                    </tr>
+                    `
+                    )
+                })
+                
+            })
+            
+            socket.on('bienvenidoLista', (data) => {
+                $('#table-body').empty();
+                data.forEach( (element) => {
+                    $('#table-body').append(`
+                    <tr>
+                        <td>${element.id}</td>
+                        <td>${element.title}</td>
+                        <td>${element.price}</td>
+                        <td><img src="${element.thumbnail}" width=50px></td>
+                    </tr>
+                    `
+                    )
+                })  
+            })  
+        </script>
+
+    </form>
+</div>

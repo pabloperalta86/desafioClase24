@@ -18,7 +18,7 @@ const sqlite3 = {
 }
 
 const mongoDB = {
-    mongoUrlSessions:"mongodb+srv://pablo:coder@cluster0.rinfwea.mongodb.net/?retryWrites=true&w=majority"
+    mongoUrl:"mongodb+srv://pablo:coder@cluster0.rinfwea.mongodb.net/?retryWrites=true&w=majority"
 }
 
 module.exports = {mysql, sqlite3, mongoDB};

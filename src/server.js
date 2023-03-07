@@ -12,7 +12,8 @@ const router = require('./router');
 const app = express();
 const { Server } = require('socket.io');
 const { engine } = require('express-handlebars');
-const Contenedor = require('./Contenedor.js')
+const Contenedor = require('./Contenedor.js');
+const passport = require("passport");
 
 crearTablas = async () => {
     await product.crearTabla();
@@ -32,9 +33,11 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.static('public'));
 app.use(cookieParser());
 app.use(session({
+/*
     store: MongoStore.create({
-        mongoUrl:mongoDB.mongoUrlSessions,
+        mongoUrl:mongoDB.mongoUrl,
     }),
+*/
     secret:"ClaveSuperSecreta",
     resave:false,
     saveUninitialized:false,
@@ -42,11 +45,8 @@ app.use(session({
     cookie:{maxAge: 60000}
 }));
 
-app.use(function(req, res, next){
-    req.session.cookie.expires = new Date(Date.now() + 60000);
-    req.session.touch();
-    next();
-});
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/", router);
 app.set('views', './views'); 

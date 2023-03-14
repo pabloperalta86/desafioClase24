@@ -9,12 +9,15 @@ const passport = require("passport");
 const { Strategy } = require("passport-local");
 const LocalStrategy = Strategy;
 
+const {fork} = require('child_process');
+const randomNumbers = require("./randomNumbers");
+const config = require("../config/config");
 const productos = new Contenedor("productos.json");
 const router = express.Router();
 
 const BCRYP_SALT_ROUNDS = 12;
 
-mongoose.connect("mongodb+srv://pablo:coder@cluster0.rinfwea.mongodb.net/?retryWrites=true&w=majority")
+mongoose.connect(config.MONGO_URL)
     .then(()=> {
         console.log('Base de datos conectada')
     }).catch((err)=> {
@@ -134,7 +137,6 @@ router.get("/logout",(req,res)=>{
     })
 });
 
-
 router.get("/login-error",userNotLogged,(req,res)=>{
     res.render("loginError");
 });
@@ -142,5 +144,32 @@ router.get("/login-error",userNotLogged,(req,res)=>{
 router.get("/login",userNotLogged,(req,res)=>{
     res.render("login");
 });
+
+
+/*---------------- RUTAS NUMEROS RANDOM E INFO -------------- */
+
+router.get('/api/randoms/', (req, res) => {
+    let cantDatos = parseInt(req.query.cant);
+    const forked = fork('./src/randomNumbers.js');
+    forked.on('message', numbers => {
+        res.send(numbers);
+    })
+    forked.send(cantDatos);
+    console.log("random succesful")
+});
+
+router.get('/info', (req, res) =>{
+    const info = {
+        args: process.argv.slice(2),
+        sistema: process.platform,
+        nodeVersion: process.version,
+        memory: process.memoryUsage.rss(),
+        pathEjecucion: __dirname,
+        processId: process.pid,
+        CarpetaProyecto: process.cwd()
+    }
+    
+    res.send(info)
+})
 
 module.exports = router;

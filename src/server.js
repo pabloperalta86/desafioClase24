@@ -14,6 +14,9 @@ const { Server } = require('socket.io');
 const { engine } = require('express-handlebars');
 const Contenedor = require('./Contenedor.js');
 const passport = require("passport");
+const config = require("../config/config");
+const minimist = require("minimist");
+
 
 crearTablas = async () => {
     await product.crearTabla();
@@ -24,6 +27,10 @@ crearTablas();
 
 const server = http.createServer(app);
 const io = new Server(server);
+
+
+const argvPort = minimist(process.argv.slice(2), {alias: {"p": "port"}})
+const PORT = argvPort.port || 8080;
 
 //const product = new Contenedor("productos.json");
 //const chat = new Contenedor("chat.json")
@@ -38,7 +45,7 @@ app.use(session({
         mongoUrl:mongoDB.mongoUrl,
     }),
 */
-    secret:"ClaveSuperSecreta",
+    secret:config.SECRET_SESSION,
     resave:false,
     saveUninitialized:false,
     rolling:true,
@@ -62,8 +69,8 @@ io.on('connection', async (socket) => {
     
     //const productos = await product.getAllProducts();
     //socket.emit('bienvenidoLista', productos )
-    
-    await axios.get('http://localhost:8080/productos-test')
+
+    await axios.get(`http://localhost:${PORT}/productos-test`)
     .then(function (response) {
         socket.emit('bienvenidoLista', response.data)
     })
@@ -91,7 +98,6 @@ io.on('connection', async (socket) => {
 
 })
 
-const PORT = 8080;
 server.listen(PORT, () => {
     console.log(` >>>>> 🚀 Server started at http://localhost:${PORT}`)
 })

@@ -77,7 +77,7 @@
 
             btn.addEventListener('click', (evt) => {
                 $('#table-body').empty();
-                fetch('http://localhost:8080/productos-test')
+                fetch('/productos-test')
                     .then(response => response.json())
                     .then(data => data.forEach( (element) => {
                             $('#table-body').append(`

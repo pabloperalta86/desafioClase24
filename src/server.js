@@ -23,7 +23,7 @@ const numCores = os.cpus().length;
 const argvPort = minimist(process.argv.slice(2), {alias: {"p": "port", "m": "mode"}})
 const PORT = argvPort.port || 8080;
 const MODE = argvPort.mode || "FORK";
-
+console.log(argvPort,process.argv.slice(2))
 if(MODE === "CLUSTER" && cluster.isPrimary){
     for(let i=0;i<numCores;i++){
         cluster.fork();
@@ -80,7 +80,7 @@ app.engine('hbs', engine({
 }))
 
 io.on('connection', async (socket) => {
-    console.log('🟢 Usuario conectado')
+    console.log('🟢 Usuario conectado.')
     
     //const productos = await product.getAllProducts();
     //socket.emit('bienvenidoLista', productos )

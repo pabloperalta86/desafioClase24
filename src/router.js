@@ -13,6 +13,8 @@ const {fork} = require('child_process');
 const randomNumbers = require("./randomNumbers");
 const config = require("../config/config");
 const productos = new Contenedor("productos.json");
+const os = require("os");
+
 const router = express.Router();
 
 const BCRYP_SALT_ROUNDS = 12;
@@ -79,7 +81,6 @@ router.get("/", checkLogged, (req,res) => {
 */
 
 router.get("/", isAuth, (req,res) => {
-    console.log(req.session)
     res.render('home',{username:req.session.passport.user});
 })
 
@@ -150,12 +151,13 @@ router.get("/login",userNotLogged,(req,res)=>{
 
 router.get('/api/randoms/', (req, res) => {
     let cantDatos = parseInt(req.query.cant);
-    const forked = fork('./src/randomNumbers.js');
+    const forked = fork('./src/randomNumbers.js', {windowsHide: true});
+    forked.send(cantDatos);
     forked.on('message', numbers => {
         res.send(numbers);
+        forked.kill(2);
     })
-    forked.send(cantDatos);
-    console.log("random succesful")
+    console.log("randoms succesful")
 });
 
 router.get('/info', (req, res) =>{
@@ -166,7 +168,8 @@ router.get('/info', (req, res) =>{
         memory: process.memoryUsage.rss(),
         pathEjecucion: __dirname,
         processId: process.pid,
-        CarpetaProyecto: process.cwd()
+        carpetaProyecto: process.cwd(),
+        procesadores: os.cpus().length
     }
     
     res.send(info)

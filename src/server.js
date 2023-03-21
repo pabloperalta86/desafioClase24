@@ -16,7 +16,25 @@ const Contenedor = require('./Contenedor.js');
 const passport = require("passport");
 const config = require("../config/config");
 const minimist = require("minimist");
+const cluster = require("cluster");
+const os = require("os");
+const numCores = os.cpus().length;
 
+const argvPort = minimist(process.argv.slice(2), {alias: {"p": "port", "m": "mode"}})
+const PORT = argvPort.port || 8080;
+const MODE = argvPort.mode || "FORK";
+
+if(MODE === "CLUSTER" && cluster.isPrimary){
+    for(let i=0;i<numCores;i++){
+        cluster.fork();
+    };
+
+    cluster.on("exit",(worker)=>{
+        console.log(`proceso ${worker.process.pid} murio`);
+        cluster.fork();
+    });
+
+} else {
 
 crearTablas = async () => {
     await product.crearTabla();
@@ -28,9 +46,6 @@ crearTablas();
 const server = http.createServer(app);
 const io = new Server(server);
 
-
-const argvPort = minimist(process.argv.slice(2), {alias: {"p": "port"}})
-const PORT = argvPort.port || 8080;
 
 //const product = new Contenedor("productos.json");
 //const chat = new Contenedor("chat.json")
@@ -99,7 +114,9 @@ io.on('connection', async (socket) => {
 })
 
 server.listen(PORT, () => {
-    console.log(` >>>>> 🚀 Server started at http://localhost:${PORT}`)
+    console.log(` >>>>> 🚀 Server started at http://localhost:${PORT} proceso: ${process.pid}`)
 })
 
 server.on('error', (err) => console.log(err))
+
+}

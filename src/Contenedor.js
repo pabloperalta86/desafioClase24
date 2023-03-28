@@ -1,4 +1,6 @@
 fs = require('fs');
+const { rawListeners } = require('process');
+const {logger} = require("../log/logger");
 
 class Contenedor{
     #path
@@ -17,6 +19,7 @@ class Contenedor{
                 return false;
             }
         } catch(error){
+            logger.error(`Error: ${error}`);
             return false;
         }
     }
@@ -33,8 +36,10 @@ class Contenedor{
                 object.id = 1;
                 await fs.promises.writeFile(this.#path, JSON.stringify([object],null,2));
             }
+            throw new Error("Error de prueba al salvar producto");
             return object.id;
         } catch(error){
+            logger.error(`${error}`);
             console.log(`No se pudo guardar el archivo, se genero este error: ${error}`)
             return 0;
         }
@@ -49,6 +54,7 @@ class Contenedor{
                 return null;
             }
         } catch(error){
+            logger.error(`Error: ${error}`);
             console.log(`No se pudo consultar el id, se genero este error: ${error}`)
             return null;
         }
@@ -62,6 +68,7 @@ class Contenedor{
                 return null;
             }        
         } catch(error){
+            logger.error(`Error: ${error}`);
             console.log(`No se pudo consultar todos los elementos, se genero este error: ${error}`)
             return null;
         }
@@ -77,6 +84,7 @@ class Contenedor{
                 return null;
             }
         } catch(error){
+            logger.error(`Error: ${error}`);
             console.log(`No se pudo consultar el id, se genero este error: ${error}`)
             return null;
         }
@@ -90,6 +98,7 @@ class Contenedor{
                 await fs.promises.writeFile(this.#path, JSON.stringify(resultado,null,2));
             }        
         } catch(error){
+            logger.error(`Error: ${error}`);
             console.log(`No se pudo borrar el id ${id}, se genero este error: ${error}`)
         }
     }
@@ -98,6 +107,7 @@ class Contenedor{
         try{
             await fs.promises.unlink(this.#path);
         } catch(error){
+            logger.error(`Error: ${error}`);
             console.log(`No se pudo borrar todo el archivo, se genero este error: ${error}`)
         }
     }

@@ -19,8 +19,10 @@ const minimist = require("minimist");
 const cluster = require("cluster");
 const os = require("os");
 const numCores = os.cpus().length;
+const {logger} = require("../log/logger");
 
-const argvPort = minimist(process.argv.slice(2), {alias: {"p": "port", "m": "mode"}})
+const argvPort = minimist(process.argv.slice(2), {alias: {"pp": "port", "m": "mode"}})
+
 const PORT = argvPort.port || 8080;
 const MODE = argvPort.mode || "FORK";
 console.log(argvPort,process.argv.slice(2))
@@ -71,6 +73,15 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/", router);
+
+app.use((req,_res,next) => {
+
+    logger.info(`Ruta inexistente en el servidor: ${req.url} - Metodo: ${req.method}`);
+    logger.warn(`Ruta inexistente en el servidor: ${req.url} - Metodo: ${req.method}`);
+    next();
+    // Ruta y método de las peticiones a rutas inexistentes en el servidor (warning)
+});
+
 app.set('views', './views'); 
 app.set('view engine', 'hbs');
 app.engine('hbs', engine({

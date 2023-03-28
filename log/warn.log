@@ -1,0 +1,11 @@
+[2023-03-26T13:30:59.460] [WARN] default - Ruta: /info23 - Metodo: GET
+[2023-03-26T13:31:01.932] [WARN] default - Ruta: /info2355 - Metodo: GET
+[2023-03-26T13:33:27.567] [WARN] default - Ruta inexistente en el servidor: /informacion - Metodo: GET
+[2023-03-26T13:34:42.737] [WARN] default - Ruta inexistente en el servidor: /informaciones - Metodo: GET
+[2023-03-26T14:10:37.601] [WARN] default - Ruta inexistente en el servidor: /productos - Metodo: GET
+[2023-03-26T14:10:43.714] [WARN] default - Ruta inexistente en el servidor: /productos-random - Metodo: GET
+[2023-03-26T14:11:11.713] [WARN] default - Ruta inexistente en el servidor: /products - Metodo: GET
+[2023-03-26T14:11:14.299] [WARN] default - Ruta inexistente en el servidor: /products - Metodo: GET
+[2023-03-26T14:17:19.678] [WARN] default - Ruta inexistente en el servidor: /products - Metodo: PUT
+[2023-03-26T14:22:41.584] [ERROR] default - Error: Error: Error de prueba al salvar producto
+[2023-03-26T14:24:20.400] [ERROR] default - Error: Error de prueba al salvar producto

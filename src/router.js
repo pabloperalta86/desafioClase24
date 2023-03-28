@@ -14,6 +14,8 @@ const randomNumbers = require("./randomNumbers");
 const config = require("../config/config");
 const productos = new Contenedor("productos.json");
 const os = require("os");
+const compression = require("compression");
+const {logger} = require("../log/logger");
 
 const router = express.Router();
 
@@ -81,19 +83,23 @@ router.get("/", checkLogged, (req,res) => {
 */
 
 router.get("/", isAuth, (req,res) => {
+    logger.info(`Ruta correcta: ${req.url} - Metodo: ${req.method}`);
     res.render('home',{username:req.session.passport.user});
 })
 
 router.post("/products", (req,res) => {
+    logger.info(`Ruta correcta: ${req.url} - Metodo: ${req.method}`);
     productos.save(req.body);
     res.redirect('/');
 })
 
 router.get('/productos-test', async (req, res) => {
+    logger.info(`Ruta correcta: ${req.url} - Metodo: ${req.method}`);
     try {
         const productosFaker = productosRandom();
         res.json(productosFaker);
     } catch (err) {
+        logger.error(`No se puede recuperar los datos ${err} - Ruta: ${req.url} - Metodo: ${req.method}`);
         res.status(500).send(`No se puede recuperar los datos ${err}`);
     }
 });
@@ -101,6 +107,7 @@ router.get('/productos-test', async (req, res) => {
 router.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login-error' }));
 
 router.post("/register",async(req,res)=>{
+    logger.info(`Ruta correcta: ${req.url} - Metodo: ${req.method}`);
     const {username,password} = await req.body;
     const doc = users.findOne({user:username}).then((doc)=>{
         if(username && password){
@@ -125,10 +132,12 @@ router.post("/register",async(req,res)=>{
 
 
 router.get("/register",(req,res)=>{
+    logger.info(`Ruta correcta: ${req.url} - Metodo: ${req.method}`);
     res.render("register")
 });
 
 router.get("/logout",(req,res)=>{
+    logger.info(`Ruta correcta: ${req.url} - Metodo: ${req.method}`);
     req.session.destroy((error)=>{
         if(error){
             res.redirect("/")
@@ -139,10 +148,12 @@ router.get("/logout",(req,res)=>{
 });
 
 router.get("/login-error",userNotLogged,(req,res)=>{
+    logger.info(`Ruta correcta: ${req.url} - Metodo: ${req.method}`);
     res.render("loginError");
 });
 
 router.get("/login",userNotLogged,(req,res)=>{
+    logger.info(`Ruta correcta: ${req.url} - Metodo: ${req.method}`);
     res.render("login");
 });
 
@@ -150,6 +161,7 @@ router.get("/login",userNotLogged,(req,res)=>{
 /*---------------- RUTAS NUMEROS RANDOM E INFO -------------- */
 
 router.get('/api/randoms/', (req, res) => {
+    logger.info(`Ruta correcta: ${req.url} - Metodo: ${req.method}`);
     let cantDatos = parseInt(req.query.cant);
     const forked = fork('./src/randomNumbers.js', {windowsHide: true});
     forked.send(cantDatos);
@@ -161,8 +173,25 @@ router.get('/api/randoms/', (req, res) => {
 });
 
 router.get('/info', (req, res) =>{
+    logger.info(`Ruta correcta: ${req.url} - Metodo: ${req.method}`);
     const info = {
-        args: process.argv.slice(2),
+        args: process.argv,
+        sistema: process.platform,
+        nodeVersion: process.version,
+        memory: process.memoryUsage.rss(),
+        pathEjecucion: __dirname,
+        processId: process.pid,
+        carpetaProyecto: process.cwd(),
+        procesadores: os.cpus().length
+    }
+    
+    res.send(info)
+})
+
+router.get('/infoComprimida', compression(), (req, res) =>{
+    logger.info(`Ruta correcta: ${req.url} - Metodo: ${req.method}`);
+    const info = {
+        args: process.argv,
         sistema: process.platform,
         nodeVersion: process.version,
         memory: process.memoryUsage.rss(),

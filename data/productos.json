@@ -10,5 +10,35 @@
     "price": "250",
     "thumbnail": "https://frutas/img",
     "id": 2
+  },
+  {
+    "title": "banana",
+    "price": "200",
+    "thumbnail": "https://frutas/img",
+    "id": 3
+  },
+  {
+    "title": "banana",
+    "price": "200",
+    "thumbnail": "https://frutas/img",
+    "id": 4
+  },
+  {
+    "title": "banana",
+    "price": "200",
+    "thumbnail": "https://frutas/img",
+    "id": 5
+  },
+  {
+    "title": "banana",
+    "price": "200",
+    "thumbnail": "https://frutas/img",
+    "id": 6
+  },
+  {
+    "title": "banana",
+    "price": "200",
+    "thumbnail": "https://frutas/img",
+    "id": 7
   }
 ]

@@ -163,17 +163,47 @@ router.get("/login",userNotLogged,(req,res)=>{
 router.get('/api/randoms/', (req, res) => {
     logger.info(`Ruta correcta: ${req.url} - Metodo: ${req.method}`);
     let cantDatos = parseInt(req.query.cant);
-    const forked = fork('./src/randomNumbers.js', {windowsHide: true});
-    forked.send(cantDatos);
-    forked.on('message', numbers => {
-        res.send(numbers);
-        forked.kill(2);
-    })
+//    const forked = fork('./src/randomNumbers.js', {windowsHide: true});
+//    forked.send(cantDatos);
+//    forked.on('message', numbers => {
+//        res.send(numbers);
+//        forked.kill(2);
+//    })
+
+    const range = 1000
+    if(cantDatos == null){ 
+        cantDatos=100000000
+    }
+
+    const numbersObj = {};
+    for (let i = 0; i < cantDatos; i++) {
+        const numero = parseInt(Math.random() * range) + 1
+        if (!numbersObj[numero]) numbersObj[numero] = 0;
+        numbersObj[numero]++;
+    }
+
+    res.send(numbersObj);
     console.log("randoms succesful")
 });
 
 router.get('/info', (req, res) =>{
     logger.info(`Ruta correcta: ${req.url} - Metodo: ${req.method}`);
+    console.log(`Ruta correcta: ${req.url} - Metodo: ${req.method}`);
+    const info = {
+        args: process.argv,
+        sistema: process.platform,
+        nodeVersion: process.version,
+        memory: process.memoryUsage.rss(),
+        pathEjecucion: __dirname,
+        processId: process.pid,
+        carpetaProyecto: process.cwd(),
+        procesadores: os.cpus().length
+    }
+    
+    res.send(info)
+})
+
+router.get('/infoSinLog', (req, res) =>{
     const info = {
         args: process.argv,
         sistema: process.platform,

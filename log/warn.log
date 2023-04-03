@@ -9,3 +9,6 @@
 [2023-03-26T14:17:19.678] [WARN] default - Ruta inexistente en el servidor: /products - Metodo: PUT
 [2023-03-26T14:22:41.584] [ERROR] default - Error: Error: Error de prueba al salvar producto
 [2023-03-26T14:24:20.400] [ERROR] default - Error: Error de prueba al salvar producto
+[2023-04-02T18:33:08.070] [WARN] default - Ruta inexistente en el servidor: /favicon.ico - Metodo: GET
+[2023-04-02T18:33:09.320] [WARN] default - Ruta inexistente en el servidor: /assets/favicon.ico - Metodo: GET
+[2023-04-02T18:34:50.756] [WARN] default - Ruta inexistente en el servidor: /random - Metodo: GET

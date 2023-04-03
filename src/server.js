@@ -23,7 +23,7 @@ const {logger} = require("../log/logger");
 
 const argvPort = minimist(process.argv.slice(2), {alias: {"pp": "port", "m": "mode"}})
 
-const PORT = argvPort.port || 8080;
+const PORT = process.env.PORT || 8080;
 const MODE = argvPort.mode || "FORK";
 console.log(argvPort,process.argv.slice(2))
 if(MODE === "CLUSTER" && cluster.isPrimary){
